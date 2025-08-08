@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Text-To-Speech</title>
+    <script
+      src="https://kit.fontawesome.com/832b237b70.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>AI Text-To-Speech</h1>
+      <textarea id="text-input" placeholder="Type Your Text Here"></textarea>
+      <select id="select-voice"></select>
+      <button id="speakBtn">
+        <i class="fa-solid fa-volume-high"></i> Speak
+      </button>
+    </div>
+
+    <script>
+      const textInput = document.getElementById("text-input");
+      const selectVoice = document.getElementById("select-voice");
+      const speakBtn = document.getElementById("speakBtn");
+
+      let voices = [];
+
+      function populateVoiceList() {
+        voices = speechSynthesis.getVoices();
+        selectVoice.innerHTML = "";
+
+        voices.forEach((voice) => {
+          const option = document.createElement("option");
+          option.value = voice.name;
+          option.textContent = `${voice.name} (${voice.lang})`;
+          selectVoice.appendChild(option);
+        });
+      }
+
+      speakBtn.addEventListener("click", () => {
+        const text = textInput.value.trim();
+        if (!text) {
+          alert("Please enter some text");
+          return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const selectedVoice = voices.find(
+          (voice) => voice.name === selectVoice.value
+        );
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+
+        speechSynthesis.speak(utterance);
+      });
+
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+      populateVoiceList();
+    </script>
+  </body>
+</html>
